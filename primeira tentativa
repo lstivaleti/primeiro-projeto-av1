@@ -1,0 +1,184 @@
+/* TRAB DOG
+  matric, nome, cargo, contrames, contrano:caracter
+  sal, valorinss, valorir, ir, salf, nfilhos, tvenc, tdesc, tliq, fgts:dobro
+ inicio
+    escreva("Número de matricula:")
+    leia(matric)
+    escreva("Nome do funcionário:")
+    leia(nome)
+    escreva("Cargo do funcionário:")
+    leia(cargo)
+    escreva("Salario do funcionário:")
+    leia(sal)
+    escreva("Escreva o mês do contracheque:")
+    leia(contrames)
+    escreva("Escreva o ano do contracheque:")
+    leia(contrano)
+    escreva("Numero de filhos menores de 14 anos:")
+    leia(nfilhos)
+Processamento
+    se sal<=1693.72 entao
+       valinss=sal*0.08
+    senao
+      se sal>1693.72 e sal<=2822.90 entao
+       valinss=sal*0.09
+      senao
+         se sal>2822.90 e sal<=5645.80 entao
+          valinss=sal*0.11
+         senao
+            valinss=621.04
+         fim se
+	  fim se
+	fim se
+    se sal<=1903.98 entao
+	     ir = 0
+	senao
+	   se sal>1903.98 e sal<=2826.65 entao
+	      ir = 0.075
+	   senao
+	        se sal>2826.65 e sal<=3751.05 entao
+	      ir=0.15
+		    senao
+			     se sal>3751.05 e sal<4664.68 entao
+				 ir=0.225
+				 senao 
+				 ir=0.275
+			   fim se
+		   fim se	    
+	   fim se
+	fim se
+   valorir=sal*ir
+   se nfilhos>=1 entao
+       se sal<=806.80 entao
+          salf=41.37*nfilhos 
+       senao 
+          se sal>806.80 e sal<=1212.64 entao
+            salf=29.16*nfilhos
+          senao
+		     sal>1212.64 entao
+              salf=0
+   senao
+       salf=0
+   tvenc=sal+salf
+   tdesc=sal-(valorinss+valorir)
+   tliq=tvenc-tdesc
+   fgts=tliq*0.08     
+        
+*/
+#include <iostream>
+#include <ctype.h>
+using namespace std;
+int main()
+{
+    // Variaveis globais
+    char matric[4], nome[40], cargo[20], contrames[2], contrano[4];
+    double sal, valorinss, inss, valorir, ir, salf, nfilhos, tvenc, tdesc, tliq, fgts, vref, npass, ndias, vt, custopass, nfaltas, nsemanas, diasfalt, descfalt;
+    //Entrada de dados
+    cout<<"================================================================================"<<endl;
+    cout<<"Escreva Sua Matricula....................:"; 
+    cin>>matric;
+    cout<<"Escreva seu Nome.........................:";
+    cin>>nome;
+    cout<<"Escreva seu Salario......................:";
+    cin>>sal;
+    cout<<"Escreva seu Cargo........................:";
+    cin>>cargo;
+    cout<<"Escreva o mes do contracheque............:";
+    cin>>contrames;
+    cout<<"Escreva o ano do contracheque............:";
+    cin>>contrano;
+    cout<<"Numero de filhos menores de 14 anos......:";
+    cin>>nfilhos;
+    cout<<"Numero de passagens por dia..............:";
+    cin>>npass;
+    cout<<"Numero de dias de trabalho no mes........:";
+    cin>>ndias;
+    cout<<"Numero de faltas no mes..................:";
+    cin>>nfaltas;
+    cout<<"Numero de semanas em que houveram faltas.:";
+    cin>>nsemanas;
+    cout<<"================================================================================"<<endl;
+    //Processamento e calculos
+    if(sal<=1693.72)//INSS
+       {inss=8;
+	   valorinss=sal*(inss/100);}
+    else if(sal>1693.72 && sal<=2822.90)
+		  {inss=9;
+		  valorinss=sal*(inss/100);}
+		else if(sal>2822.90 && sal<=5645.80)
+			  {inss=11;
+			  valorinss=sal*(inss/100);}
+			else
+			  {inss=621.04;
+			  valorinss=inss;}	
+	if(sal<=1903.98)//IMPOSTO DE RENDA
+	  {ir=0;}
+	else if(sal>1903.98 && sal<=2826.65)
+	   {ir=7.5;}
+	   else if(sal>2826.65 && sal<=3751.05)
+	      {ir=15;}
+	      else if(sal>3751.05 && sal<=4664.68)
+	            {ir=22.5;}
+	            else 
+	            {ir=27.5;}
+    valorir=sal*(ir/100);
+    if(nfilhos>=1)//SALARIO FAMILIA
+       if(sal<=806.80)
+         {salf=41.37*nfilhos;}
+       else if(sal>806.80 && sal<=1212.64)
+           {salf=29.16*nfilhos;}
+         else
+             salf=0;
+    else
+	   salf=0;
+   vref=sal*0.15;//VALE REFEIÇÃO
+   tvenc=sal+salf;//TOTAL DE VENCIMENTOS
+   tdesc=valorinss+valorir+descfalt+vref+vt;//TOTAL DE DESCONTOS
+   tliq=tvenc-tdesc;//SALARIO LIQUIDO
+   fgts=tliq*0.08;//FGTS
+   custopass=(npass*ndias)*4;//VALE TRANSPORTE
+   if (custopass>(sal*0.06))
+      {vt=sal*0.06;}
+      else 
+      {vt=custopass;}
+   //FALTAS
+   diasfalt=nfaltas+nsemanas;
+   descfalt=diasfalt*(sal/30);   
+   //Saida De Dados
+   cout<<"Valor do INSS..................:"<<valorinss<<endl;        
+   cout<<"Valor do Imposto de Renda......:"<<valorir<<endl;
+   cout<<"Valor Salario Familia..........:"<<salf<<endl;
+   cout<<"Total de vencimentos...........:"<<tvenc<<endl;
+   cout<<"Total de descontos.............:"<<tdesc<<endl;
+   cout<<"Valor liquido do salario.......:"<<tliq<<endl;
+   cout<<"Valor do FGTS..................:"<<fgts<<endl;
+   cout<<"Custo Vale transporte..........:"<<vt<<endl;
+   cout<<"Desconto de faltas.............:"<<descfalt<<endl;
+   cout<<"Vale alimentacao...............:"<<vref<<endl;
+   
+   	cout<<"========================================================================================================="<<endl;
+	cout<<"||   Empresa: Stivaleti Corp    ||     CNPJ: 93.433.146/0001-01      ||        Mes e ano:"<<contrames<<"/"<<contrano<<"        ||"<<endl;
+	cout<<"||=====================================================================================================||"<<endl;
+	cout<<"||   Nome:"<<nome<<"                             || Cargo:"<<cargo<<"            || Matricula:"<<matric<<"            ||"<<endl;
+    cout<<"||=====================================================================================================||"<<endl;
+    cout<<"||                 Descricao               ||   Referencias   ||    Vencimentos    ||    Descontos     ||"<<endl;
+    cout<<"||=====================================================================================================||"<<endl;
+    cout<<"||      Salarios                           ||     30 dias     ||    R$"<<sal<<"    ||                        ||"<<endl;
+    cout<<"||      INSS                               ||    "<<inss<<"      ||                   ||        R$"<<valorinss<<"        ||"<<endl;
+	cout<<"||      Importo de Renda                   ||    "<<ir<<"        ||                   ||        R$"<<valorir<<"         ||"<<endl;
+	cout<<"||      Salario familia                    ||                 ||    R$"<<salf<<"    ||                      ||"<<endl;
+	cout<<"||      Vale refeicao                      ||      15%        ||                   ||    "<<vref<<"       ||"<<endl; 
+	cout<<"||      Vale transporte                    ||    ate 6%       ||                   ||    "<<vt<<"         ||"<<endl; 
+	cout<<"||      Faltas                             ||    diarias      ||                   ||    "<<descfalt<<"       ||"<<endl;
+	cout<<"||                                         ||                 ||                   ||                  ||"<<endl;  
+	cout<<"||                                         ||                 ||                   ||                  ||"<<endl; 
+	cout<<"||-----------------------------------------------------------------------------------------------------||"<<endl;
+	cout<<"|| Total de vencimentos: R$"<<tvenc<<"  ||  Total de descontos: R$"<<tdesc<<"  ||                               ||"<<endl;
+	cout<<"||-----------------------------------------------------------------------------------------------------||"<<endl;
+	cout<<"|| Valor liquido: R$"<<tliq<<"                       ||   Valor do FGTS: R$"<<fgts<<"                        ||"<<endl;
+	cout<<"========================================================================================================="<<endl;
+    system("pause");
+    return 0;
+}
+
+  
