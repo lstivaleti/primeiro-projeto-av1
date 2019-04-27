@@ -1,88 +1,34 @@
-/* TRAB DOG
-  matric, nome, cargo, contrames, contrano:caracter
-  sal, valorinss, valorir, ir, salf, nfilhos, tvenc, tdesc, tliq, fgts:dobro
- inicio
-    escreva("Número de matricula:")
-    leia(matric)
-    escreva("Nome do funcionário:")
-    leia(nome)
-    escreva("Cargo do funcionário:")
-    leia(cargo)
-    escreva("Salario do funcionário:")
-    leia(sal)
-    escreva("Escreva o mês do contracheque:")
-    leia(contrames)
-    escreva("Escreva o ano do contracheque:")
-    leia(contrano)
-    escreva("Numero de filhos menores de 14 anos:")
-    leia(nfilhos)
-Processamento
-    se sal<=1693.72 entao
-       valinss=sal*0.08
-    senao
-      se sal>1693.72 e sal<=2822.90 entao
-       valinss=sal*0.09
-      senao
-         se sal>2822.90 e sal<=5645.80 entao
-          valinss=sal*0.11
-         senao
-            valinss=621.04
-         fim se
-	  fim se
-	fim se
-    se sal<=1903.98 entao
-	     ir = 0
-	senao
-	   se sal>1903.98 e sal<=2826.65 entao
-	      ir = 0.075
-	   senao
-	        se sal>2826.65 e sal<=3751.05 entao
-	      ir=0.15
-		    senao
-			     se sal>3751.05 e sal<4664.68 entao
-				 ir=0.225
-				 senao 
-				 ir=0.275
-			   fim se
-		   fim se	    
-	   fim se
-	fim se
-   valorir=sal*ir
-   se nfilhos>=1 entao
-       se sal<=806.80 entao
-          salf=41.37*nfilhos 
-       senao 
-          se sal>806.80 e sal<=1212.64 entao
-            salf=29.16*nfilhos
-          senao
-		     sal>1212.64 entao
-              salf=0
-   senao
-       salf=0
-   tvenc=sal+salf
-   tdesc=sal-(valorinss+valorir)
-   tliq=tvenc-tdesc
-   fgts=tliq*0.08     
-        
-*/
 #include <iostream>
-#include <ctype.h>
+#include <string>
+#include <iomanip>
+#include <cmath> 
 using namespace std;
 int main()
-{
+{ 
+   // Constantes de formataçao da tabela
+    const int namew = 16 ;
+    const int int_width = 7 ;
+    const int num_flds = 7 ;
+    const std::string sep = " ||" ;
+    const int total_width = namew*3 + int_width*2 + sep.size() * num_flds ;
+    const std::string line = sep + std::string( total_width-1, '=' ) + sep ;
+
     // Variaveis globais
-    char matric[4], nome[40], cargo[20], contrames[2], contrano[4];
+    string nomeFull, cargoFull;
+    char matricula[5], contrames[2], contrano[4];
     double sal, valorinss, inss, valorir, ir, salf, nfilhos, tvenc, tdesc, tliq, fgts, vref, npass, ndias, vt, custopass, nfaltas, nsemanas, diasfalt, descfalt;
     //Entrada de dados
     cout<<"================================================================================"<<endl;
     cout<<"Escreva Sua Matricula....................:"; 
-    cin>>matric;
+    cin>>matricula;
     cout<<"Escreva seu Nome.........................:";
-    cin>>nome;
+    cin.ignore();
+    getline(cin, nomeFull);
     cout<<"Escreva seu Salario......................:";
     cin>>sal;
     cout<<"Escreva seu Cargo........................:";
-    cin>>cargo;
+    cin.ignore();
+    getline(cin, cargoFull);
     cout<<"Escreva o mes do contracheque............:";
     cin>>contrames;
     cout<<"Escreva o ano do contracheque............:";
@@ -98,87 +44,278 @@ int main()
     cout<<"Numero de semanas em que houveram faltas.:";
     cin>>nsemanas;
     cout<<"================================================================================"<<endl;
-    //Processamento e calculos
-    if(sal<=1693.72)//INSS
-       {inss=8;
-	   valorinss=sal*(inss/100);}
-    else if(sal>1693.72 && sal<=2822.90)
-		  {inss=9;
-		  valorinss=sal*(inss/100);}
-		else if(sal>2822.90 && sal<=5645.80)
-			  {inss=11;
-			  valorinss=sal*(inss/100);}
-			else
-			  {inss=621.04;
-			  valorinss=inss;}	
-	if(sal<=1903.98)//IMPOSTO DE RENDA
-	  {ir=0;}
-	else if(sal>1903.98 && sal<=2826.65)
-	   {ir=7.5;}
-	   else if(sal>2826.65 && sal<=3751.05)
-	      {ir=15;}
-	      else if(sal>3751.05 && sal<=4664.68)
-	            {ir=22.5;}
-	            else 
-	            {ir=27.5;}
-    valorir=sal*(ir/100);
-    if(nfilhos>=1)//SALARIO FAMILIA
-       if(sal<=806.80)
-         {salf=41.37*nfilhos;}
-       else if(sal>806.80 && sal<=1212.64)
-           {salf=29.16*nfilhos;}
-         else
-             salf=0;
-    else
+   // ----------------------------------------------------------------------
+      //Processamento e calculos
+         // INSS -- https://www.inss.gov.br/servicos-do-inss/calculo-da-guia-da-previdencia-social-gps/tabela-de-contribuicao-mensal/
+    if(sal<=1693.72) { 
+
+        inss=8;
+
+        valorinss=sal*(inss/100);
+
+    }
+
+    else if(sal>1693.72 && sal<=2822.90) {
+
+        inss=9;
+
+		valorinss=sal*(inss/100);
+
+    }
+
+	else if(sal>2822.90 && sal<=5645.80) {
+
+        inss=11;
+
+        valorinss=sal*(inss/100);}
+
+	else {
+
+        inss=621.04;
+
+		valorinss=inss;
+
+    }
+
+    //IMPOSTO DE RENDA -- https://impostoderenda2019.blog.br/calculo-imposto-de-renda-2019/
+
+	if(sal<=1903.98){
+
+        ir=0;
+
+    }
+
+	else if(sal>1903.98 && sal<=2826.65) {
+
+        ir=7.5;
+
+    }
+
+	else if(sal>2826.65 && sal<=3751.05) {
+
+        ir=15;
+
+    }
+
+	else if(sal>3751.05 && sal<=4664.68) {
+
+        ir=22.5;
+
+    }
+
+	else {
+
+        ir=27.5;
+
+    }
+
+    valorir = sal*(ir/100);
+
+
+
+    //SALARIO FAMILIA -- https://calendariobolsafamilia2019.com.br/salario-familia-2019/
+
+    if(nfilhos>=1) {
+
+       if(sal<=806.80) {
+
+           salf=41.37*nfilhos;
+
+        }
+
+        else if(sal>806.80 && sal<=1212.64) {
+
+            salf=29.16*nfilhos;
+
+        }
+
+        else 
+
+            salf = 0;
+
+    }
+
+    else {
+
 	   salf=0;
-   vref=sal*0.15;//VALE REFEIÇÃO
-   tvenc=sal+salf;//TOTAL DE VENCIMENTOS
-   tdesc=valorinss+valorir+descfalt+vref+vt;//TOTAL DE DESCONTOS
-   tliq=tvenc-tdesc;//SALARIO LIQUIDO
-   fgts=tliq*0.08;//FGTS
-   custopass=(npass*ndias)*4;//VALE TRANSPORTE
-   if (custopass>(sal*0.06))
-      {vt=sal*0.06;}
-      else 
-      {vt=custopass;}
-   //FALTAS
-   diasfalt=nfaltas+nsemanas;
-   descfalt=diasfalt*(sal/30);   
-   //Saida De Dados
-   cout<<"Valor do INSS..................:"<<valorinss<<endl;        
-   cout<<"Valor do Imposto de Renda......:"<<valorir<<endl;
-   cout<<"Valor Salario Familia..........:"<<salf<<endl;
-   cout<<"Total de vencimentos...........:"<<tvenc<<endl;
-   cout<<"Total de descontos.............:"<<tdesc<<endl;
-   cout<<"Valor liquido do salario.......:"<<tliq<<endl;
-   cout<<"Valor do FGTS..................:"<<fgts<<endl;
-   cout<<"Custo Vale transporte..........:"<<vt<<endl;
-   cout<<"Desconto de faltas.............:"<<descfalt<<endl;
-   cout<<"Vale alimentacao...............:"<<vref<<endl;
+
+    }
+
+    
+   //VALE REFEIÇÃO -- https://meusalario.uol.com.br/trabalho-decente/saiba-como-funciona-o-pagamento-do-vale-refeicao 
+   vref=sal*0.9;
    
-   	cout<<"========================================================================================================="<<endl;
-	cout<<"||   Empresa: Stivaleti Corp    ||     CNPJ: 93.433.146/0001-01      ||        Mes e ano:"<<contrames<<"/"<<contrano<<"        ||"<<endl;
-	cout<<"||=====================================================================================================||"<<endl;
-	cout<<"||   Nome:"<<nome<<"                             || Cargo:"<<cargo<<"            || Matricula:"<<matric<<"            ||"<<endl;
-    cout<<"||=====================================================================================================||"<<endl;
-    cout<<"||                 Descricao               ||   Referencias   ||    Vencimentos    ||    Descontos     ||"<<endl;
-    cout<<"||=====================================================================================================||"<<endl;
-    cout<<"||      Salarios                           ||     30 dias     ||    R$"<<sal<<"    ||                        ||"<<endl;
-    cout<<"||      INSS                               ||    "<<inss<<"      ||                   ||        R$"<<valorinss<<"        ||"<<endl;
-	cout<<"||      Importo de Renda                   ||    "<<ir<<"        ||                   ||        R$"<<valorir<<"         ||"<<endl;
-	cout<<"||      Salario familia                    ||                 ||    R$"<<salf<<"    ||                      ||"<<endl;
-	cout<<"||      Vale refeicao                      ||      15%        ||                   ||    "<<vref<<"       ||"<<endl; 
-	cout<<"||      Vale transporte                    ||    ate 6%       ||                   ||    "<<vt<<"         ||"<<endl; 
-	cout<<"||      Faltas                             ||    diarias      ||                   ||    "<<descfalt<<"       ||"<<endl;
-	cout<<"||                                         ||                 ||                   ||                  ||"<<endl;  
-	cout<<"||                                         ||                 ||                   ||                  ||"<<endl; 
-	cout<<"||-----------------------------------------------------------------------------------------------------||"<<endl;
-	cout<<"|| Total de vencimentos: R$"<<tvenc<<"  ||  Total de descontos: R$"<<tdesc<<"  ||                               ||"<<endl;
-	cout<<"||-----------------------------------------------------------------------------------------------------||"<<endl;
-	cout<<"|| Valor liquido: R$"<<tliq<<"                       ||   Valor do FGTS: R$"<<fgts<<"                        ||"<<endl;
-	cout<<"========================================================================================================="<<endl;
+   //TOTAL DE VENCIMENTOS 
+   tvenc=sal+salf;
+
+   //TOTAL DE DESCONTOS
+   tdesc=valorinss+valorir+descfalt+vref+vt;
+
+   //SALARIO LIQUIDO
+   tliq=tvenc-tdesc;
+
+   //FGTS -- https://www.bompracredito.com.br/blog/calculo-salario-liquido
+   fgts=sal*0.08;
+
+   //VALE TRANSPORTE -- https://trt-3.jusbrasil.com.br/noticias/210879008/desconto-de-6-pelo-vale-transporte-incide-apenas-sobre-o-salario-basico
+   custopass=(npass*ndias)*4;
+
+   if (custopass>(sal*0.06)) {
+
+       vt=sal*0.06;
+
+    } 
+
+    else {
+
+        vt=custopass;
+
+    }
+   //FALTAS -- https://www.jornalcontabil.com.br/faltas-nao-justificadas-e-os-reflexos-na-remuneracao/
+   
+   diasfalt = nfaltas+nsemanas;
+
+   descfalt = round(diasfalt*(sal/30));   
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------
+
+// Cabeçalho 1
+
+    std::cout << line << '\n' << sep
+              << std::setw(num_flds) << "Empresa: Stivaleti Corp" 
+              << sep
+              << std::setw(namew) << "CNPJ: 93.433.146/0001-01" 
+              << sep 
+              << std::setw(namew) << "Mes e Ano: 09/2019" 
+              << '\n' << line << '\n';
+
+// Cabeçalho 2
+
+std::cout << sep
+              << std::setw(namew) << "Nome: " << nomeFull
+              << sep
+              << std::setw(namew) << "Cargo: " << cargoFull
+              << sep 
+              << std::setw(num_flds) << "Matricula: " << matricula
+              << '\n' << line << '\n'
+              << '\n' << line;
+
+// Cabeçalho 3
+
+std::cout << '\n' << sep
+              << std::setw(namew) << "Descricao" 
+              << sep
+              << std::setw(namew) << "Referencias" 
+              << sep 
+              << std::setw(namew) << "Vencimentos" 
+              << sep 
+              << std::setw(namew) << "Descontos" 
+              << '\n' << line << '\n'
+              << '\n' << line;
+
+// Tabela de valores 1
+
+std::cout << '\n' << sep
+              << std::setw(namew) << "Salarios" 
+              << sep
+              << std::setw(namew) << "30 dias" 
+              << sep 
+              << std::setw(namew) << "R$" <<sal
+              << sep 
+              << std::setw(namew) << "" 
+              << '\n' << line << '\n';
+
+// Tabela de valores 2
+
+std::cout << sep
+              << std::setw(namew) << "INSS" 
+              << sep
+              << std::setw(namew) << inss
+              << sep 
+              << std::setw(namew) << "" 
+              << sep 
+              << std::setw(namew) << "R$" << valorinss
+              << '\n' << line << '\n';
+
+// Tabela de valores 3
+
+std::cout << sep
+              << std::setw(namew) << "Imposto de Renda" 
+              << sep
+              << std::setw(namew) << ir 
+              << sep 
+              << std::setw(namew) << "" 
+              << sep 
+              << std::setw(namew) << "R$" << valorir
+              << '\n' << line << '\n';
+
+// Tabela de valores 4
+
+std::cout << sep
+              << std::setw(namew) << "Salario Familia" 
+              << sep
+              << std::setw(namew) << "" 
+              << sep 
+              << std::setw(namew) << "R$" << salf 
+              << sep 
+              << std::setw(namew) << "" 
+              << '\n' << line << '\n';
+
+
+
+// Tabela de valores 5
+
+std::cout << sep
+              << std::setw(namew) << "Vale Refeicao" 
+              << sep
+              << std::setw(namew) << "9%" 
+              << sep 
+              << std::setw(namew) << "" 
+              << sep 
+              << std::setw(namew) << "R$" << vref 
+              << '\n' << line << '\n';
+
+// Tabela de valores 6
+
+std::cout << sep
+              << std::setw(namew) << "Vale Transporte" 
+              << sep
+              << std::setw(namew) << "ate 6%" 
+              << sep 
+              << std::setw(namew) << "" 
+              << sep 
+              << std::setw(namew) << "R$" << vt 
+              << '\n' << line << '\n';
+
+// Tabela de valores 7
+
+std::cout << sep
+              << std::setw(namew) << "FALTAS" 
+              << sep
+              << std::setw(namew) << "diarias" 
+              << sep 
+              << std::setw(namew) << "" 
+              << sep 
+              << std::setw(namew) << "R$" << descfalt 
+              << '\n' << line << '\n'
+              << '\n' << line;
+
+// Rodapé 1
+
+std::cout << '\n' << sep
+              << std::setw(namew) << "Total de vencimentos: R$" << tvenc
+              << sep
+              << std::setw(namew) << "Total de descontos: R$" << tdesc 
+              << '\n' << line << '\n';
+
+// Rodapé 2
+
+std::cout << sep
+              << std::setw(namew) << "Valor Liquido: R$" << tliq
+              << sep
+              << std::setw(namew) << "Valor FGTS: R$" << fgts 
+              << '\n' << line << '\n';
+// ----------------------------------------------------------------------
     system("pause");
     return 0;
 }
-
-  
